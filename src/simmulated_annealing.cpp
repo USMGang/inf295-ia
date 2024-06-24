@@ -18,8 +18,7 @@ void simulatedAnnealing(Solution &s, int max_iter){
 
         s_new = s.getNeighborSolution();
         if (s.quality > s_new.quality){
-            // swap(s, s_new);
-            s = s_new;
+            swap(s, s_new);
         } else {
             if (T == 0){
                 Riter++;
@@ -31,8 +30,7 @@ void simulatedAnnealing(Solution &s, int max_iter){
             } else {
                 float accept_prob = exp(-abs(s_new.quality - s.quality)/T);
                 if (accept_prob > r.getProbability()){
-                    // swap(s, s_new);
-                    s = s_new;
+                    swap(s, s_new);
                 }
             }
         }

@@ -14,6 +14,7 @@ public:
     float getProbability();
     int getRandomEntity();
     int getRandomRoom();
+    int getRandomIndex(int max);
 
     vector<Entity> getRandEntities();
     vector<Room> getRandRooms();

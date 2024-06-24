@@ -21,18 +21,25 @@ Solution::Solution(const Solution& other)
         unused_space(other.unused_space), overused_space(other.overused_space), hard_constraint_value(other.hard_constraint_value),
         soft_constraint_value(other.soft_constraint_value), quality(other.quality) {}
 
-Solution& Solution::operator=(const Solution& other) {
-    if (this != &other) {
-        solution = other.solution;
-        rooms_space = other.rooms_space;
-        unused_space = other.unused_space;
-        overused_space = other.overused_space;
-        hard_constraint_value = other.hard_constraint_value;
-        soft_constraint_value = other.soft_constraint_value;
-        quality = other.quality;
-    }
+Solution& Solution::operator=(Solution other) {
+    swap(*this, other);
     return *this;
 }
+
+Solution::~Solution(){}
+
+// Solution& Solution::operator=(const Solution& other) {
+//     if (this != &other) {
+//         solution = other.solution;
+//         rooms_space = other.rooms_space;
+//         unused_space = other.unused_space;
+//         overused_space = other.overused_space;
+//         hard_constraint_value = other.hard_constraint_value;
+//         soft_constraint_value = other.soft_constraint_value;
+//         quality = other.quality;
+//     }
+//     return *this;
+// }
 
 bool Solution::verifyRoom(float needed_space, int rid){
     if (rooms_space[rid] - needed_space <= 0){
@@ -41,39 +48,55 @@ bool Solution::verifyRoom(float needed_space, int rid){
     return true;
 }
 
-int Solution::nextRoomGreedy(int start, int neighbor, float needed_space, vector<Room> &rooms_shuffled){
-    Random &r = Random::getRandomMotor();
-    int n_rooms = rooms_shuffled.size();
-    start = (start + neighbor) % n_rooms;
+// int Solution::nextRoomGreedy(int start, int neighbor, float needed_space, vector<Room> &rooms_shuffled){
+//     Random &r = Random::getRandomMotor();
+//     int n_rooms = rooms_shuffled.size();
+//     start = (start + neighbor) % n_rooms;
+//
+//     for (int i=0; i<n_rooms; i++){
+//         if (rooms_space[rooms_shuffled[start].rid] - needed_space >= 0){
+//             return start;
+//         }
+//         start = (start + 1) % n_rooms;
+//     }
+//
+//     while(true){
+//         int rid = r.getRandomRoom();
+//         auto it = find_if(rooms_shuffled.begin(), rooms_shuffled.end(), [rid](Room &r){
+//             return r.rid == rid;
+//         });
+//
+//         if (it != rooms_shuffled.end()){
+//             return rid;
+//         }
+//     }
+// }
 
-    for (int i=0; i<n_rooms; i++){
-        if (rooms_space[rooms_shuffled[start].rid] - needed_space >= 0){
-            return start;
-        }
-        start = (start + 1) % n_rooms;
-    }
-
-    while(true){
-        int rid = r.getRandomRoom();
-        auto it = find_if(rooms_shuffled.begin(), rooms_shuffled.end(), [rid](Room &r){
-            return r.rid == rid;
-        });
-
-        if (it != rooms_shuffled.end()){
-            return rid;
-        }
-    }
-}
-
-void Solution::addEntity(int eid, int rid){
+void Solution::addEntity(int eid, int rid) {
+    // Verificar que eid y rid estén dentro de los límites
     solution[eid] = rid;
     rooms_space[rid] -= p.entities[eid]->space;
+    // if (eid >= 0 && static_cast<size_t>(eid) < solution.size() && rid >= 0 && static_cast<size_t>(rid) < rooms_space.size()) {
+    // }
 }
 
-void Solution::deleteEntity(int eid, int rid){
+void Solution::deleteEntity(int eid, int rid) {
+    // Verificar que eid y rid estén dentro de los límites
     solution[eid] = -1;
     rooms_space[rid] += p.entities[eid]->space;
+    // if (eid >= 0 && static_cast<size_t>(eid) < solution.size() && rid >= 0 && static_cast<size_t>(rid) < rooms_space.size()) {
+    // }
 }
+
+// void Solution::addEntity(int eid, int rid){
+//     solution[eid] = rid;
+//     rooms_space[rid] -= p.entities[eid]->space;
+// }
+//
+// void Solution::deleteEntity(int eid, int rid){
+//     solution[eid] = -1;
+//     rooms_space[rid] += p.entities[eid]->space;
+// }
 
 int Solution::verifyConstraints(int constraint_type){
     int weight = 0;
@@ -180,7 +203,7 @@ void Solution::setSolutionQuality(){
 Solution Solution::getNeighborSolution(){
     Random &r = Random::getRandomMotor();
 
-    Solution s = Solution(*this);
+    Solution s(*this);
 
     // Poner la entidad
     // int eid = r.getRandomEntity();

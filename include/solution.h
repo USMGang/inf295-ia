@@ -3,6 +3,7 @@
 
 #include "globals.h"
 #include "problem.h"
+#include <utility>
 
 class Solution {
 public:
@@ -18,7 +19,8 @@ public:
 
     Solution();
     Solution(const Solution& other);
-    Solution& operator=(const Solution& other);
+    Solution& operator=(Solution other);
+    ~Solution();
 
     bool verifyRoom(float needed_space, int rid);
     int nextRoomGreedy(int start, int neighbor, float needed_space, vector<Room> &rooms_shuffled);
@@ -28,7 +30,21 @@ public:
     void getInitialSolution();
     void setSolutionQuality();
     Solution getNeighborSolution();
+
+    friend void swap(Solution& first, Solution& second) noexcept;
 };
+
+// Implementación de la función swap
+inline void swap(Solution& first, Solution& second) noexcept {
+    using std::swap;
+    swap(first.solution, second.solution);
+    swap(first.rooms_space, second.rooms_space);
+    swap(first.unused_space, second.unused_space);
+    swap(first.overused_space, second.overused_space);
+    swap(first.hard_constraint_value, second.hard_constraint_value);
+    swap(first.soft_constraint_value, second.soft_constraint_value);
+    swap(first.quality, second.quality);
+}
 
 // inline ostream& operator<<(ostream& os, const Solution& s){
 //     Problem &_p = s.p;
@@ -49,12 +65,6 @@ public:
 //         os << endl << endl;
 //     }
 //
-//
-//     float total_space = 0;
-//     for (int i=0; i<int(_p.n_rooms); i++){
-//         total_space += _p.rooms[i].space;
-//     }
-//     os << "Espacio total: " << total_space << endl;
 //
 //     os << "Espacio Sobrante en habitaciones: " << s.unused_space << endl;
 //     os << "Espacio Sobrante en habitaciones sobreocupadas: " << s.overused_space << endl;

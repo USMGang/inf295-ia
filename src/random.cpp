@@ -24,6 +24,11 @@ Random::Random(unsigned seed_aux){
     room = uniform_int_distribution<int>(0, Problem::getInstance().n_rooms - 1);
 }
 
+int Random::getRandomIndex(int max){
+    uniform_int_distribution<int> index(0, max - 1);
+    return index(gen);
+}
+
 float Random::getProbability(){
     return probability(gen);
 }

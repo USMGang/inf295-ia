@@ -16,6 +16,7 @@ all: $(DIR) $(OUT)
 
 $(DIR):
 	mkdir -p $(DIR)
+	mkdir -p ./data
 
 $(OUT): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) -o $@

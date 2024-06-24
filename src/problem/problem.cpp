@@ -111,7 +111,13 @@ Problem::Problem(int dataset, int index){
     constraints.resize(2);
     for (int i=0; i<2; i++){
         constraints[i].resize(10);
+        for (int j=0; j<10; j++){
+            for (int k=0; k<n_entities; k++){
+                constraints[i][j][k] = nullptr;
+            }
+        }
     }
+
     for (int i=0; i<n_constraints; i++){
         getline(file, line);
         
