@@ -37,13 +37,25 @@ int Random::getRandomRoom(){
 }
 
 vector<Entity> Random::getRandEntities(){
-    vector<Entity> entities = Problem::getInstance().entities;
+    const auto& source_entities = Problem::getInstance().entities;
+    vector<Entity> entities;
+    entities.reserve(source_entities.size());
+    for (const auto& e: source_entities){
+        entities.push_back(*e);
+    }
+
     shuffle(entities.begin(), entities.end(), gen);
     return entities;
 }
 
 vector<Room> Random::getRandRooms(){
-    vector<Room> rooms = Problem::getInstance().rooms;
+    const auto& source_rooms = Problem::getInstance().rooms;
+    vector<Room> rooms;
+    rooms.reserve(source_rooms.size());
+    for (const auto& r: source_rooms){
+        rooms.push_back(*r);
+    }
+
     shuffle(rooms.begin(), rooms.end(), gen);
     return rooms;
 }

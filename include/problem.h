@@ -2,6 +2,7 @@
 #define PROBLEM_H
 
 #include "globals.h"
+#include <memory.h>
 
 class Problem {
 public:
@@ -10,6 +11,8 @@ public:
 
     Problem(const Problem&) = delete;
     void operator=(const Problem&) = delete;
+    ~Problem();
+    void destroyInstance();
 
     int n_entities;
     int n_rooms;
@@ -19,9 +22,9 @@ public:
     int n_soft_constraints;
     float total_space;
 
-    vector<Entity> entities;
-    vector<Room> rooms;
-    vector<vector<map<int, Constraint>>> constraints;
+    vector<unique_ptr<Entity>> entities;
+    vector<unique_ptr<Room>> rooms;
+    vector<vector<map<int, unique_ptr<Constraint>>>> constraints;
 
 private:
     Problem(int dataset, int index);

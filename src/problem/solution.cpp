@@ -12,7 +12,7 @@ Solution::Solution(){
     solution.assign(p.n_entities, -1);
 
     for (int i=0; i<p.n_rooms; i++){
-        rooms_space.push_back(p.rooms[i].space);
+        rooms_space.push_back(p.rooms[i]->space);
     }
 }
 
@@ -67,12 +67,12 @@ int Solution::nextRoomGreedy(int start, int neighbor, float needed_space, vector
 
 void Solution::addEntity(int eid, int rid){
     solution[eid] = rid;
-    rooms_space[rid] -= p.entities[eid].space;
+    rooms_space[rid] -= p.entities[eid]->space;
 }
 
 void Solution::deleteEntity(int eid, int rid){
     solution[eid] = -1;
-    rooms_space[rid] += p.entities[eid].space;
+    rooms_space[rid] += p.entities[eid]->space;
 }
 
 int Solution::verifyConstraints(int constraint_type){
@@ -83,7 +83,9 @@ int Solution::verifyConstraints(int constraint_type){
     // Revisar por los distintos tipos de restricciones
     for (int i=0; i<10; i++){
         for (auto &m: p.constraints[constraint_type][i]){
-            const Constraint& c = m.second;
+            if (m.second == nullptr){ continue; }
+
+            const Constraint& c = *m.second;
 
             switch(i){
                 case ALLOCATION_CONSTRAINT:
@@ -120,8 +122,8 @@ int Solution::verifyConstraints(int constraint_type){
 
                 case ADJACENCY_CONSTRAINT: {
                     if (solution[c.c1] == -1 || solution[c.c2] == -1){ break; }
-                    const Room& r1 = p.rooms[solution[c.c1]];
-                    const Room& r2 = p.rooms[solution[c.c2]];
+                    const Room& r1 = *p.rooms[solution[c.c1]];
+                    const Room& r2 = *p.rooms[solution[c.c2]];
 
                     auto it = find(r1.adj_list.begin(), r1.adj_list.end(), r2.rid);
                     if (it == r1.adj_list.end()){ violated_constraint = true; }
@@ -151,7 +153,7 @@ void Solution::setSolutionQuality(){
 
     // Calcular el espacio utilizado
     for (int i=0; i<p.n_rooms; i++){
-        if (rooms_space[i] >= 0 && rooms_space[i] != p.rooms[i].space){
+        if (rooms_space[i] >= 0 && rooms_space[i] != p.rooms[i]->space){
             unused_space += rooms_space[i];
         }
 
@@ -167,8 +169,8 @@ void Solution::setSolutionQuality(){
     // float _space = QUALITY_SPACE * (unused_space + (-2 * overused_space));
     float _space = 0;
     for (int i=0; i<p.n_rooms; i++){
-        int aux = (rooms_space[i] != p.rooms[i].space) ? rooms_space[i] : 0;
-        _space += max((p.rooms[i].space - aux), (2*(aux - p.rooms[i].space)));
+        int aux = (rooms_space[i] != p.rooms[i]->space) ? rooms_space[i] : 0;
+        _space += max((p.rooms[i]->space - aux), (2*(aux - p.rooms[i]->space)));
     }
 
     // Calcular la calidad de la solucion.

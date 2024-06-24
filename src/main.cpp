@@ -13,16 +13,15 @@ int main(){
     Solution s = Solution();
 
     // Obtener una solucion inicial con enfoque greedy
-    // int neighbors = s.p.n_entities/2;
-    int neighbors = 10;
+    int neighbors = s.p.n_entities/2;
     getInitialSolution(s, neighbors);
-
-    // cout << s << endl;
-    cout << s.quality << endl;
+    // cout << s.quality << endl;
 
     // Mejorar nuestra solucion inicial con simulated annealing
     // simulatedAnnealing(s, 1000);
     // cout << s.quality << endl;
+
+    Problem::getInstance().~Problem();
 
     return 0;
 }

@@ -7,25 +7,27 @@ void satisfyHardConstraints(Solution &s, vector<Entity> &entities_shuffled, vect
     vector<int> banned_entities;
     vector<int> banned_rooms = vector<int>(p.n_rooms, -1);
 
-    // Agregar las entidades que tienen restricciones de alojamiento
-    for (auto m: p.constraints[HARD][ALLOCATION_CONSTRAINT]){
-        const Constraint &c = m.second;
+    //Agregar las entidades que tienen restricciones de alojamiento
+    for (auto &m: p.constraints[HARD][ALLOCATION_CONSTRAINT]){
+        const Constraint &c = *m.second;
         s.addEntity(c.c1, c.c2);
         banned_entities.push_back(c.c1);
     }
 
-    for (auto m: p.constraints[HARD][NOTSHARING_CONSTRAINT]){
+    for (auto &m: p.constraints[HARD][NOTSHARING_CONSTRAINT]){
         int aux_space;
-        const Constraint &c = m.second;
+        const Constraint &c = *m.second;
 
         int best_rid = 0;
         int best_room = 100000;
         for (int i=0; i<p.n_rooms; i++){
             banned_entities.push_back(c.c1);
-            if (s.verifyRoom(p.entities[c.c1].space, i)){
-                aux_space = s.rooms_space[i] - p.entities[c.c1].space;
-                if (banned_rooms[i] == -1 && aux_space <= best_room && p.constraints[HARD][NONALLOCATION_CONSTRAINT][c.c1].c2 != i){
-                    best_rid = i;
+            if (s.verifyRoom(p.entities[c.c1]->space, i)){
+                aux_space = s.rooms_space[i] - p.entities[c.c1]->space;
+                if (p.constraints[HARD][NONALLOCATION_CONSTRAINT][c.c1] != nullptr){
+                    if (banned_rooms[i] == -1 && aux_space <= best_room && p.constraints[HARD][NONALLOCATION_CONSTRAINT][c.c1]->c2 != i){
+                        best_rid = i;
+                    }
                 }
             }
         }
@@ -33,7 +35,6 @@ void satisfyHardConstraints(Solution &s, vector<Entity> &entities_shuffled, vect
         banned_rooms[best_rid] = c.c1;
         s.addEntity(c.c1, best_rid);
     }
-
     // Eliminar las entidades y habitaciones prohibidas
     for (auto eid: banned_entities){
         auto it = find_if(entities_shuffled.begin(), entities_shuffled.end(), [eid](Entity &e){

@@ -69,50 +69,82 @@ Problem::Problem(int dataset, int index){
     getline(file, line);
     getline(file, line);
     for (int i=0; i<n_entities; i++){
-        Entity e;
         getline(file, line);
+        int eid, gid;
+        float space;
 
         istringstream iss(line);
-        iss >> e.eid >> e.gid >> e.space;
-        entities[i] = e;
+        iss >> eid >> gid >> space;
+        entities[i] = make_unique<Entity>();
+        entities[i]->eid = eid;
+        entities[i]->gid = gid;
+        entities[i]->space = space;
     }
 
     // Definir las habitaciones
     getline(file, line);
     getline(file, line);
     for (int i=0; i<n_rooms; i++){
-        Room r;
         getline(file, line);
+        int rid, fid;
+        float space;
 
         istringstream iss(line);
-        iss >> r.rid >> r.fid >> r.space;
+        iss >> rid >> fid >> space;
+
+        rooms[i] = make_unique<Room>();
+        rooms[i]->rid = rid;
+        rooms[i]->fid = fid;
+        rooms[i]->space = space;
+
         int aux;
         int n; iss >> n;
         for (int j=0; j<n; j++){
             iss >> aux;
-            r.adj_list.push_back(aux);
+            rooms[i]->adj_list.push_back(aux);
         }
-        rooms[i] = r;
     }
 
     // Definir las restricciones
     getline(file, line);
     getline(file, line);
-    constraints = vector<vector<map<int, Constraint>>>(2, vector<map<int, Constraint>>(10));
+    constraints.resize(2);
+    for (int i=0; i<2; i++){
+        constraints[i].resize(10);
+    }
     for (int i=0; i<n_constraints; i++){
-        Constraint c;
         getline(file, line);
         
-        int type, is_hard;
+        int cid, c1, c2, type, is_hard;
         istringstream iss(line);
-        iss >> c.cid >> type >> is_hard >> c.c1 >> c.c2;
+        iss >> cid >> type >> is_hard >> c1 >> c2;
 
-        constraints[is_hard][type][c.c1] = c;
+        constraints[is_hard][type][c1] = make_unique<Constraint>();
+        constraints[is_hard][type][c1]->cid = cid;
+        constraints[is_hard][type][c1]->c1 = c1;
+        constraints[is_hard][type][c1]->c2 = c2;
     }
 
     // Calcular el espacio total que tiene disponible las habitaciones
     total_space = 0;
     for (int i=0; i<n_rooms; i++){
-        total_space += rooms[i].space;
+        total_space += rooms[i]->space;
     }
+}
+
+void Problem::destroyInstance(){
+    delete instance;
+    instance = nullptr;
+}
+
+Problem::~Problem(){
+    entities.clear();
+    rooms.clear();
+    for (auto& row : constraints) {
+        for (auto& m : row) {
+            m.clear();
+        }
+        row.clear();
+    }
+    constraints.clear();
 }
