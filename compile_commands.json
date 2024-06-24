@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "bin/src/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/home/panda/code/usm/inf295-ia",
+    "file": "/home/panda/code/usm/inf295-ia/src/main.cpp",
+    "output": "/home/panda/code/usm/inf295-ia/bin/src/main.o"
+  }
+]
